@@ -272,7 +272,7 @@ def handle_result(name, entry, t, state, force, index=None, total=None):
     while True:
         if state.get("status") == "ok":
             warn = state.get("warning")
-            mark = _color("✅", GREEN)
+            mark = _color("●", GREEN)
             print(f"{mark} {name} built OK" + (f"\n   {_color('⚠', BURNT_YELLOW)} {warn}" if warn else ""))
             return "ok"
 
@@ -325,14 +325,13 @@ def main():
 
     print(f"Found {len(apps)} app folder(s):\n")
     for name, entry, t in apps:
-        tag = t if b.needs_build_step(t, entry) else f"{t} — no build needed"
+        needs_build = b.needs_build_step(t, entry)
+        tag = t if needs_build else f"{t} — no build needed"
         state = b.load_state(name)
-        if state.get("status") == "ok":
-            marker = _color("✅", GREEN)
-        elif state.get("status") == "skipped":
-            marker = _color("⏭ ", BURNT_YELLOW)
+        if not needs_build or state.get("status") == "ok":
+            marker = _color("●", GREEN)   # ready: built OK, or static (nothing to build)
         else:
-            marker = "  "
+            marker = _color("●", RED)     # not ready: never built, failed, or skipped
         print(f"  {marker} {name:<32} {tag}")
 
     if args.only:
@@ -357,7 +356,7 @@ def main():
 
     pending = pending_list(apps, force=args.force)
     if not pending:
-        print("\n✅ Everything is already built and up to date. Rescan will be instant.")
+        print(f"\n{_color('●', GREEN)} Everything is already built and up to date. Rescan will be instant.")
         if args.serve:
             launch_server()
         return
@@ -398,4 +397,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print(f"\n{_color('●', RED)} Interrupted — stopping.")
+        sys.exit(130)
