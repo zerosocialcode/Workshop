@@ -1,0 +1,285 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: 'Big Shoulders Display', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+:root {
+  /* day — drafting paper */
+  --bg: #ece5d2;
+  --bg-deep: #e2dac2;
+  --paper: #f8f4e8;
+  --ink: #23261f;
+  --ink-soft: #63604e;
+  --ink-faint: #9b9781;
+  --line: #c7bb98;
+  --line-soft: #d9cfae;
+  --accent: #b8441f;
+  --accent-ink: #fbf1e6;
+  --ok: #3f6b45;
+  --warn: #8a5a00;
+  --fail: #a3311c;
+  color-scheme: light;
+}
+
+html[data-theme="night"] {
+  /* night — blueprint cyanotype */
+  --bg: #0d1d31;
+  --bg-deep: #0a1626;
+  --paper: #123058;
+  --ink: #d9e8f4;
+  --ink-soft: #8fadc7;
+  --ink-faint: #4d6f8f;
+  --line: #24476b;
+  --line-soft: #1a3452;
+  --accent: #ff7a45;
+  --accent-ink: #241005;
+  --ok: #7fe3b4;
+  --warn: #f2c14e;
+  --fail: #ff8a70;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background:
+    repeating-linear-gradient(0deg, var(--line-soft) 0, var(--line-soft) 1px, transparent 1px, transparent 34px),
+    repeating-linear-gradient(90deg, var(--line-soft) 0, var(--line-soft) 1px, transparent 1px, transparent 34px),
+    var(--bg);
+  background-attachment: fixed;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+@keyframes drift {
+  0% { background-position: 0 0, 0 0, 0 0; }
+  100% { background-position: 0 34px, 34px 0, 0 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body {
+    animation: drift 70s linear infinite;
+  }
+}
+
+.ws-text-mono {
+  font-family: var(--font-mono);
+}
+.ws-text-display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+.ws-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-faint);
+}
+
+.ws-btn-primary {
+  background-color: var(--accent);
+  color: var(--accent-ink);
+  border: 1px solid var(--accent);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  border-radius: 3px;
+  padding: 11px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ws-btn-primary:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.ws-btn-secondary {
+  background-color: var(--ink);
+  color: var(--paper);
+  border: 1px solid var(--ink);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  border-radius: 3px;
+  padding: 11px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ws-btn-secondary:hover {
+  filter: brightness(1.08);
+}
+
+.ws-btn-ghost-small {
+  background-color: transparent;
+  color: var(--ink-soft);
+  border: 1px solid transparent;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  border-radius: 3px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ws-btn-ghost-small:hover {
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.ws-card {
+  background-color: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 18px;
+  position: relative;
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.ws-card::before, .ws-card::after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--ink-faint);
+  transition: border-color 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+.ws-card::before {
+  top: -1px;
+  left: -1px;
+  border-right: none;
+  border-bottom: none;
+}
+.ws-card::after {
+  bottom: -1px;
+  right: -1px;
+  border-left: none;
+  border-top: none;
+}
+.ws-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 26px -14px color-mix(in srgb, var(--ink) 55%, transparent);
+}
+.ws-card:hover::before, .ws-card:hover::after {
+  border-color: var(--accent);
+  transform: scale(1.2);
+}
+
+.theme-switch-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.theme-switch-plate {
+  width: 76px;
+  height: 44px;
+  background-color: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  position: relative;
+  cursor: pointer;
+  box-shadow: inset 0 2px 4px color-mix(in srgb, var(--ink) 10%, transparent);
+}
+.theme-switch-plate::before, .theme-switch-plate::after {
+  content: "";
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--ink-faint);
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: inset 0 1px 1px color-mix(in srgb, var(--ink) 30%, transparent);
+}
+.theme-switch-plate::before { top: 4px; }
+.theme-switch-plate::after { bottom: 4px; }
+
+.theme-switch-rocker {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 32px;
+  height: 32px;
+  background-color: var(--ink);
+  border-radius: 4px;
+  transition: transform 0.4s cubic-bezier(.5,1.8,.5,1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.theme-switch-rocker::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent);
+}
+html[data-theme="night"] .theme-switch-rocker {
+  transform: translateX(32px);
+}
+
+.ws-editor-container {
+  display: flex;
+  background-color: var(--bg-deep);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  overflow: hidden;
+  height: 100%;
+}
+.ws-editor-lines {
+  background-color: var(--paper);
+  color: var(--ink-faint);
+  padding: 16px 8px;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  border-right: 1px solid var(--line);
+  user-select: none;
+  min-width: 3rem;
+  overflow: hidden;
+  white-space: pre;
+}
+.ws-editor-textarea {
+  background-color: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  padding: 16px;
+  border: none;
+  outline: none;
+  resize: none;
+  width: 100%;
+  white-space: pre;
+  overflow: auto;
+}
+.ws-editor-textarea:focus {
+  outline: none;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-rise-in {
+  animation: rise-in 0.6s cubic-bezier(.2,.8,.2,1) both;
+}
+.delay-100 { animation-delay: 100ms; }
+.delay-170 { animation-delay: 170ms; }

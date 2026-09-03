@@ -1,0 +1,20 @@
+{
+  "id": "image-converter",
+  "name": "Image Converter",
+  "description": "Convert images between formats — drag a file in, pick an output format, download the result.",
+  "version": "1.0.0",
+  "category": "Utilities",
+  "keywords": ["image", "convert", "format", "png", "jpg", "webp", "compress"],
+  "intents": ["convert_image", "jpg_to_jpeg", "png_to_webp", "image_format_conversion"],
+  "open": "embed",
+  "disabled": false,
+  "actions": [
+    { "label": "Convert to PNG", "aliases": ["png output", "convert image to png"], "path": "?to=png" },
+    { "label": "Convert to JPEG", "aliases": ["jpg output", "convert image to jpg"], "path": "?to=jpg" },
+    { "label": "Convert to WebP", "aliases": ["webp output", "convert image to webp"], "path": "?to=webp" },
+    { "label": "Convert to AVIF", "aliases": ["avif output", "convert image to avif"], "path": "?to=avif" },
+    { "label": "Convert to BMP", "aliases": ["bmp output", "convert image to bmp"], "path": "?to=bmp" },
+    { "label": "Convert to GIF", "aliases": ["gif output", "convert image to gif"], "path": "?to=gif" },
+    { "label": "Convert to TIFF", "aliases": ["tiff output", "convert image to tiff"], "path": "?to=tiff" }
+  ]
+}

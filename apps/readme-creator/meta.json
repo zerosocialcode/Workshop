@@ -1,0 +1,15 @@
+{
+  "id": "readme-creator",
+  "name": "README Creator",
+  "description": "Fill in a form, watch a README.md build itself, download when it's ready.",
+  "version": "1.0.0",
+  "category": "Docs",
+  "keywords": ["readme", "markdown", "documentation", "generator", "project docs"],
+  "open": "embed",
+  "disabled": false,
+  "actions": [
+    { "label": "New README", "aliases": ["create readme", "blank readme", "new md", "blank md", "start readme", "make readme", "readme new"], "path": "?mode=new" },
+    { "label": "README template", "aliases": ["readme sample", "quick readme", "starter readme", "fill readme", "example readme", "fill template"], "path": "?mode=template" },
+    { "label": "Download README", "aliases": ["save readme", "export readme", "get readme", "download md", "export md", "readme download"], "path": "?mode=download" }
+  ]
+}

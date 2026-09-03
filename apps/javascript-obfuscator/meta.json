@@ -1,0 +1,18 @@
+{
+  "id": "javascript-obfuscator",
+  "name": "JavaScript Obfuscator",
+  "description": "Production-grade JS obfuscation: control flow flattening, string encryption, dead code injection, constant folding, with a live sandbox to validate output.",
+  "version": "1.0.0",
+  "category": "Dev Tools",
+  "keywords": ["javascript", "obfuscator", "minify", "security", "ast", "code protection"],
+  "produces": ["text/javascript"],
+  "accepts": ["text/javascript"],
+  "open": "embed",
+  "disabled": false,
+  "actions": [
+    { "label": "JS obfuscate draft", "aliases": ["js draft", "js obfuscate light", "js encrypt draft"], "path": "?preset=draft" },
+    { "label": "JS obfuscate balanced", "aliases": ["js balanced", "js encrypt balanced", "js encrypt medium"], "path": "?preset=balanced" },
+    { "label": "JS obfuscate", "aliases": ["js encrypt", "js obfuscate industrial", "js encrypt default"], "path": "?preset=industrial" },
+    { "label": "JS obfuscate max", "aliases": ["js encrypt max", "js max armor", "js obfuscate maximum"], "path": "?preset=max_armor" }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "id": "calculator",
+  "name": "Calculator",
+  "description": "Advanced scientific calculator with history and export capabilities.",
+  "version": "1.0.0",
+  "category": "Utilities",
+  "keywords": ["calculator", "math", "scientific", "arithmetic", "history"],
+  "intents": ["do_math", "calculate_expression"],
+  "open": "embed",
+  "disabled": false,
+  "actions": []
+}

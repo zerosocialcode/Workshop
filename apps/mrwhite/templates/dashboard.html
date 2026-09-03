@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mr.White — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <div class="crop-mark tl"></div>
+  <div class="crop-mark tr"></div>
+  <div class="crop-mark bl"></div>
+  <div class="crop-mark br"></div>
+  <div class="light-flood" id="lightFlood"></div>
+
+  <header class="topbar">
+    <div class="brand-inline">Mr.White</div>
+    <div class="topbar-right">
+      <span class="user-pill mono">@{{ username }}</span>
+      <button id="logout-btn" class="btn">Log out</button>
+      <div class="switch-block">
+        <button type="button" id="themeToggle" aria-label="Toggle day/night theme"><span class="rocker"></span></button>
+        <span class="switch-label-bottom mono" id="themeState">Day</span>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="download">Download</button>
+    <button class="tab-btn" data-tab="analytics">Analytics</button>
+    <button class="tab-btn" data-tab="search">Search</button>
+    <button class="tab-btn" data-tab="archive">Archive</button>
+  </nav>
+
+  <main class="content">
+
+    <!-- DOWNLOAD -->
+    <section id="tab-download" class="tab-panel active">
+      <div class="title-block">
+        <div class="eyebrow"><span class="status-dot"></span> Sheet 02 — Backup</div>
+        <h2 style="font-size:1.8rem;">Download conversations</h2>
+      </div>
+      <div class="panel-head">
+        <p class="hint" style="margin:0;">Pull your DM inbox, then pick which threads to cook into a backup.</p>
+        <button id="fetch-conv-btn" class="btn btn-primary">Fetch conversations</button>
+      </div>
+      <div id="conv-list" class="conv-list"></div>
+      <div id="download-actions" class="hidden" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+        <label class="check-row"><input type="checkbox" id="select-all"><span class="clay-box"></span> Select all</label>
+        <button id="download-btn" class="btn btn-dark">Download selected</button>
+      </div>
+      <div id="download-results" class="results"></div>
+    </section>
+
+    <!-- ANALYTICS -->
+    <section id="tab-analytics" class="tab-panel">
+      <div class="title-block">
+        <div class="eyebrow"><span class="status-dot"></span> Sheet 03 — Analytics</div>
+        <h2 style="font-size:1.8rem;">Analytics dashboard</h2>
+      </div>
+      <div class="panel-head">
+        <p class="hint" style="margin:0;">Uses the conversations you've downloaded this session. Download at least one first.</p>
+        <button id="analytics-btn" class="btn btn-primary">Generate dashboard</button>
+      </div>
+      <div id="analytics-results" class="results"></div>
+    </section>
+
+    <!-- SEARCH -->
+    <section id="tab-search" class="tab-panel">
+      <div class="title-block">
+        <div class="eyebrow"><span class="status-dot"></span> Sheet 04 — Search</div>
+        <h2 style="font-size:1.8rem;">Search backups</h2>
+      </div>
+      <form id="search-form" class="search-row">
+        <input type="text" id="search-input" placeholder="Search text, links, usernames..." required>
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+      <div id="search-results" class="results"></div>
+    </section>
+
+    <!-- ARCHIVE -->
+    <section id="tab-archive" class="tab-panel">
+      <div class="title-block">
+        <div class="eyebrow"><span class="status-dot"></span> Sheet 05 — Archive</div>
+        <h2 style="font-size:1.8rem;">Create ZIP archive</h2>
+      </div>
+      <div class="panel-head">
+        <p class="hint" style="margin:0;">Bundles every backed-up conversation into one timestamped ZIP.</p>
+        <button id="archive-btn" class="btn btn-primary">Create archive</button>
+      </div>
+      <div id="archive-results" class="results"></div>
+    </section>
+
+  </main>
+
+  <footer class="log-panel">
+    <div class="log-panel-head">Terminal <span id="log-status" class="log-status"></span></div>
+    <pre id="live-log" class="live-log">Waiting for activity...</pre>
+  </footer>
+
+  <div id="viewer-overlay" class="viewer-overlay hidden">
+    <div class="viewer-modal">
+      <div class="viewer-modal-head">
+        <span id="viewer-modal-title" class="viewer-modal-title mono">Viewer</span>
+        <button type="button" id="viewer-modal-close" class="viewer-modal-close">✕</button>
+      </div>
+      <iframe id="viewer-modal-frame" title="Mr.White viewer"></iframe>
+    </div>
+  </div>
+
+  <script src="static/app.js"></script>
+  <script>
+    // set initial tab from server-rendered state (?tab= deep link from Workshop's Quick Find)
+    document.addEventListener('DOMContentLoaded', () => {
+      const initial = "{{ initial_tab }}";
+      if (initial && initial !== 'download') {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === initial));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + initial));
+      }
+    });
+  </script>
+</body>
+</html>

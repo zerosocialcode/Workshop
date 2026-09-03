@@ -1,0 +1,17 @@
+{
+  "id": "api-tester",
+  "name": "API Tester",
+  "description": "A browser-native HTTP workbench for building, sending, inspecting, saving, and replaying API requests.",
+  "version": "2.0.0",
+  "category": "Developer",
+  "keywords": ["api", "http", "rest", "request", "postman", "json", "curl", "headers", "auth", "endpoint", "debug"],
+  "open": "embed",
+  "disabled": false,
+  "actions": [
+    { "label": "Test a GET request", "aliases": ["get api", "get request", "fetch endpoint"], "path": "?mode=get" },
+    { "label": "Test a POST request", "aliases": ["post api", "post request", "send json"], "path": "?mode=post" },
+    { "label": "Test an authenticated API", "aliases": ["auth api", "bearer token", "api authentication"], "path": "?mode=auth" },
+    { "label": "Import a cURL request", "aliases": ["curl import", "paste curl", "curl to request"], "path": "?mode=curl" },
+    { "label": "Open API samples", "aliases": ["sample requests", "api examples", "demo requests"], "path": "?mode=samples" }
+  ]
+}

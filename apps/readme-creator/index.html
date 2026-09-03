@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>README Creator — Workshop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- crop marks -->
+<div class="crop crop-tl" aria-hidden="true"></div>
+<div class="crop crop-tr" aria-hidden="true"></div>
+<div class="crop crop-bl" aria-hidden="true"></div>
+<div class="crop crop-br" aria-hidden="true"></div>
+
+<div class="page">
+
+  <header class="titleblock" id="header">
+    <div class="titleblock-top">
+      <div>
+        <p class="eyebrow">Sheet 01 — Documentation Drafting</p>
+        <h1 class="display-title">README Creator</h1>
+        <p class="subtitle mono">answer the form · watch the sheet fill in · export when it's ready</p>
+      </div>
+
+      <div class="switch-unit" aria-label="Theme switch">
+        <p class="eyebrow switch-label-top">Lights</p>
+        <button type="button" class="switch-plate" id="themeToggle" role="switch" aria-checked="false" aria-label="Toggle day and night theme">
+          <span class="rocker"><span class="rocker-dot"></span></span>
+        </button>
+        <p class="eyebrow switch-label-bottom" id="themeState">Day</p>
+      </div>
+    </div>
+    <div class="titleblock-rule"><span class="titleblock-rule-draw"></span></div>
+  </header>
+
+  <main class="grid" id="mainGrid">
+
+    <!-- ============ FORM COLUMN ============ -->
+    <section class="col col-form">
+
+      <form id="readmeForm" autocomplete="off">
+
+        <div class="card spec" style="--i:0">
+          <p class="eyebrow">01 — Project</p>
+          <label class="field-label" for="f-name">Project name</label>
+          <input class="field" type="text" id="f-name" placeholder="e.g. Geocoder Pro" value="My Project">
+
+          <label class="field-label" for="f-tagline">One-line tagline</label>
+          <input class="field" type="text" id="f-tagline" placeholder="What does it do, in one line?" value="A short, honest sentence about what this project does.">
+
+          <label class="field-label" for="f-repo">Repo path <span class="field-hint">(for badge links — owner/repo)</span></label>
+          <input class="field" type="text" id="f-repo" placeholder="yourname/your-repo">
+
+          <label class="field-label">Badges</label>
+          <div class="badge-row">
+            <label class="check"><input type="checkbox" id="f-badge-license" checked><span>License</span></label>
+            <label class="check"><input type="checkbox" id="f-badge-version"><span>Version</span></label>
+            <label class="check"><input type="checkbox" id="f-badge-build"><span>Build</span></label>
+            <label class="check"><input type="checkbox" id="f-badge-pr"><span>PRs welcome</span></label>
+          </div>
+        </div>
+
+        <div class="card spec" style="--i:1">
+          <p class="eyebrow">02 — Overview</p>
+          <label class="field-label" for="f-description">Description</label>
+          <textarea class="field" id="f-description" rows="4" placeholder="A few sentences — what problem this solves and who it's for.">This project exists to solve a specific problem, quickly and without ceremony. Describe the "why" here before the "how" shows up later in the document.</textarea>
+
+          <label class="check standalone"><input type="checkbox" id="f-toc" checked><span>Include table of contents</span></label>
+        </div>
+
+        <div class="card spec" style="--i:2">
+          <p class="eyebrow">03 — Installation</p>
+          <label class="field-label" for="f-install-lang">Command language</label>
+          <select class="field" id="f-install-lang">
+            <option value="bash" selected>bash</option>
+            <option value="powershell">powershell</option>
+            <option value="python">python</option>
+            <option value="text">plain text</option>
+          </select>
+          <label class="field-label" for="f-install">Install steps</label>
+          <textarea class="field mono-field" id="f-install" rows="4" placeholder="git clone ...&#10;cd your-repo&#10;npm install">git clone https://github.com/yourname/your-repo.git
+cd your-repo
+npm install</textarea>
+        </div>
+
+        <div class="card spec" style="--i:3">
+          <p class="eyebrow">04 — Usage</p>
+          <label class="field-label" for="f-usage-lang">Example language</label>
+          <select class="field" id="f-usage-lang">
+            <option value="bash" selected>bash</option>
+            <option value="javascript">javascript</option>
+            <option value="python">python</option>
+            <option value="text">plain text</option>
+          </select>
+          <label class="field-label" for="f-usage">Usage example</label>
+          <textarea class="field mono-field" id="f-usage" rows="4" placeholder="npm start">npm start</textarea>
+        </div>
+
+        <div class="card spec" style="--i:4">
+          <p class="eyebrow">05 — Features</p>
+          <ul class="chip-list" id="featureList"></ul>
+          <div class="add-row">
+            <input class="field" type="text" id="f-feature-input" placeholder="Add a feature, press Enter">
+            <button type="button" class="btn btn-ghost btn-small" id="addFeatureBtn">Add</button>
+          </div>
+        </div>
+
+        <div class="card spec" style="--i:5">
+          <p class="eyebrow">06 — Tech stack</p>
+          <ul class="chip-list" id="stackList"></ul>
+          <div class="add-row">
+            <input class="field" type="text" id="f-stack-input" placeholder="Add a technology, press Enter">
+            <button type="button" class="btn btn-ghost btn-small" id="addStackBtn">Add</button>
+          </div>
+        </div>
+
+        <div class="card spec" style="--i:6">
+          <p class="eyebrow">07 — Contributing</p>
+          <textarea class="field" id="f-contributing" rows="3" placeholder="How should people contribute?">Contributions are welcome. Open an issue first to discuss what you'd like to change, then submit a pull request.</textarea>
+        </div>
+
+        <div class="card spec" style="--i:7">
+          <p class="eyebrow">08 — License &amp; contact</p>
+          <label class="field-label" for="f-license">License</label>
+          <select class="field" id="f-license">
+            <option value="MIT" selected>MIT</option>
+            <option value="Apache-2.0">Apache 2.0</option>
+            <option value="GPL-3.0">GPL 3.0</option>
+            <option value="BSD-3-Clause">BSD 3-Clause</option>
+            <option value="Unlicense">Unlicense</option>
+            <option value="none">No license section</option>
+          </select>
+
+          <label class="field-label" for="f-author">Author / maintainer</label>
+          <input class="field" type="text" id="f-author" placeholder="Your name">
+
+          <label class="field-label" for="f-contact">Contact link <span class="field-hint">(email, site, or profile)</span></label>
+          <input class="field" type="text" id="f-contact" placeholder="you@example.com or https://...">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-ghost" id="resetBtn">Reset sheet</button>
+          <button type="button" class="btn btn-ghost" id="templateBtn">Load template</button>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- ============ PREVIEW COLUMN ============ -->
+    <section class="col col-preview">
+      <div class="card spec preview-card" style="--i:1">
+        <div class="preview-head">
+          <div>
+            <p class="eyebrow">Sheet 02 — Output</p>
+            <p class="mono preview-stats" id="previewStats">0 words · 0 headings</p>
+          </div>
+          <div class="tab-row" role="tablist">
+            <button type="button" class="tab active" id="tabRendered" role="tab" aria-selected="true">Rendered</button>
+            <button type="button" class="tab" id="tabRaw" role="tab" aria-selected="false">Raw</button>
+          </div>
+        </div>
+
+        <div class="preview-body">
+          <div id="renderedView" class="rendered-view"></div>
+          <pre id="rawView" class="raw-view mono" hidden><code id="rawCode"></code></pre>
+        </div>
+
+        <div class="preview-actions">
+          <button type="button" class="btn btn-dark" id="copyBtn">Copy markdown</button>
+          <button type="button" class="btn btn-primary" id="downloadBtn">Download README.md</button>
+        </div>
+        <p class="mono copy-flash" id="copyFlash" aria-live="polite"></p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="light-flood" id="lightFlood" aria-hidden="true"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mr.White — Sign in</title>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <div class="crop-mark tl"></div>
+  <div class="crop-mark tr"></div>
+  <div class="crop-mark bl"></div>
+  <div class="crop-mark br"></div>
+  <div class="light-flood" id="lightFlood"></div>
+
+  <div class="login-shell">
+    <div class="login-card">
+
+      <div class="title-block">
+        <div class="eyebrow"><span class="status-dot"></span> Sheet 01 — Authentication</div>
+        <h1>Mr.White</h1>
+        <div class="subtitle">"I am the one who backs up." Instagram DM backup &amp; analytics.</div>
+        <div class="underline-draw"></div>
+      </div>
+
+      <div class="spec-card">
+        <form id="login-form">
+          <div class="field">
+            <label class="field-label" for="session_id">Instagram session ID</label>
+            <input type="password" id="session_id" name="session_id" placeholder="Paste your sessionid cookie" autocomplete="off" required>
+          </div>
+          <p class="hint">
+            Open <code>web.instagram.com</code> → DevTools (F12) → Application → Cookies →
+            copy the value of <code>sessionid</code>.
+          </p>
+          <div class="actions">
+            <button type="submit" id="login-btn" class="btn btn-primary">Cook it up</button>
+          </div>
+        </form>
+
+        <div id="login-log" class="log-box hidden"></div>
+        <p id="login-error" class="error-text hidden"></p>
+      </div>
+
+      <p class="footnote">Runs entirely on your own machine. Your session ID is never sent anywhere but Instagram.</p>
+
+      <div class="switch-block" style="margin-top: 28px;">
+        <span class="switch-label-top mono">Lights</span>
+        <button type="button" id="themeToggle" aria-label="Toggle day/night theme"><span class="rocker"></span></button>
+        <span class="switch-label-bottom mono" id="themeState">Day</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="static/app.js"></script>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('login-btn');
+      const errBox = document.getElementById('login-error');
+      const logBox = document.getElementById('login-log');
+      errBox.classList.add('hidden');
+      logBox.classList.remove('hidden');
+      logBox.textContent = 'Connecting to Instagram...';
+      btn.disabled = true;
+      btn.textContent = 'Cooking...';
+
+      const fd = new FormData();
+      fd.append('session_id', document.getElementById('session_id').value.trim());
+
+      try {
+        const res = await fetch('api/login', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Login failed');
+        await pollJob(data.job_id, (s) => { logBox.textContent = s.log || 'Connecting to Instagram...'; });
+        window.location.href = '.';
+      } catch (err) {
+        errBox.textContent = err.message;
+        errBox.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = 'Cook it up';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tool unavailable — Workshop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tool-unavailable.css') }}">
+  <script>
+    // Applied inline, before first paint, so the page doesn't flash the
+    // wrong theme for a frame while an external script loads.
+    (function () {
+      var stored = localStorage.getItem('workshop-theme');
+      var preferred = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'day');
+      document.documentElement.setAttribute('data-theme', preferred);
+    })();
+  </script>
+</head>
+<body>
+  <div class="box">
+    <div class="eyebrow"><span class="blink-dot"></span>404 — off the bench</div>
+    <h1>Tool unavailable</h1>
+    <p>It doesn't exist here, or it's missing its entry file.</p>
+    <p><a href="/" class="back">&larr; Back to Workshop</a></p>
+  </div>
+</body>
+</html>

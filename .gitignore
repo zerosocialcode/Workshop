@@ -1,0 +1,114 @@
+# =========================
+# Node.js
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build / generated output
+dist/
+build/
+out/
+
+# Vite
+.vite/
+.vite-temp/
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python build / test
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+
+# =========================
+# Environment / Secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# IDE / Editors
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.code-workspace
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# Logs / Temporary files
+# =========================
+*.log
+*.tmp
+*.temp
+*.bak
+
+# =========================
+# Testing / Coverage
+# =========================
+coverage/
+.nyc_output/
+htmlcov/
+
+# =========================
+# Cache
+# =========================
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# =========================
+# TypeScript
+# =========================
+*.tsbuildinfo
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Misc generated files
+# =========================
+*.pid
+*.seed
+
+# =========================
+# Workshop platform state (pins, recent tools/commands) — personal,
+# machine-local, not something a fresh clone should inherit.
+# =========================
+/data/
+/cache/
+
+# =========================
+# Mr.White — downloaded Instagram DM backups (personal chat data,
+# media, and analytics exports). Never belongs in git, ignored or not.
+# =========================
+mrwhite_backups/
+apps/mrwhite/mrwhite_backups/

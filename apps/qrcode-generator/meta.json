@@ -1,0 +1,55 @@
+{
+  "id": "qr-barcode-studio-pro",
+  "name": "QR & Barcode Studio Pro",
+  "description": "Generate custom styled QR matrix codes and 1D linear barcodes with batch engine, optical scanner, and vector export.",
+  "version": "1.0.0",
+  "category": "Utilities",
+  "keywords": [
+    "qr",
+    "barcode",
+    "code 128",
+    "ean-13",
+    "upc",
+    "wifi qr",
+    "vcard",
+    "scanner",
+    "batch qr",
+    "matrix",
+    "pdf export",
+    "svg"
+  ],
+  "open": "embed",
+  "disabled": false,
+  "actions": [
+    {
+      "label": "Generate QR Code",
+      "aliases": ["qr", "create qr", "make qr code", "custom qr", "wifi qr", "vcard qr"],
+      "path": "?mode=qr"
+    },
+    {
+      "label": "Generate 1D Barcode",
+      "aliases": ["barcode", "code 128", "ean 13", "upc-a", "code 39", "itf 14", "linear barcode"],
+      "path": "?mode=barcode"
+    },
+    {
+      "label": "Batch Generate QR Codes",
+      "aliases": ["bulk qr", "csv qr", "multiple qr codes", "qr sequence", "batch barcode"],
+      "path": "?mode=batch"
+    },
+    {
+      "label": "Scan or Decode QR Code",
+      "aliases": ["scan qr", "read qr", "qr reader", "decode barcode", "camera scan", "optical scanner"],
+      "path": "?mode=scan"
+    },
+    {
+      "label": "Browse QR Design Sheets",
+      "aliases": ["qr templates", "qr themes", "preset sheets", "qr styles", "spec sheets"],
+      "path": "?mode=templates"
+    },
+    {
+      "label": "View Asset Registry Ledger",
+      "aliases": ["history", "saved qr codes", "ledger", "recent barcodes", "archive"],
+      "path": "?mode=history"
+    }
+  ]
+}

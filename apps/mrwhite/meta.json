@@ -1,0 +1,47 @@
+{
+  "id": "mrwhite",
+  "name": "Mr.White",
+  "description": "Backs up Instagram DMs with media, search, and an analytics dashboard.",
+  "version": "3.0.0",
+  "category": "Data & Archiving",
+  "keywords": ["instagram", "insta", "ig", "dm", "dms", "backup", "archive", "messages", "chat", "analytics", "export", "zip"],
+  "open": "embed",
+  "disabled": false,
+  "actions": [
+    {
+      "label": "Download Instagram conversations",
+      "aliases": [
+        "backup instagram", "backup instagram dms", "insta backup", "ig backup",
+        "instagram backup", "backup my dms", "backup dms", "download conversations",
+        "download dms", "download instagram messages", "save instagram messages",
+        "export instagram dms"
+      ],
+      "path": "?tab=download"
+    },
+    {
+      "label": "Generate analytics dashboard",
+      "aliases": [
+        "instagram analytics", "dm analytics", "message stats", "chat stats",
+        "insta stats", "instagram stats", "dm dashboard", "message analytics",
+        "conversation analytics"
+      ],
+      "path": "?tab=analytics"
+    },
+    {
+      "label": "Search backed up messages",
+      "aliases": [
+        "search dms", "search backups", "search instagram messages",
+        "find message", "find dm", "look up message", "search chats"
+      ],
+      "path": "?tab=search"
+    },
+    {
+      "label": "Create ZIP archive",
+      "aliases": [
+        "zip backups", "archive backups", "export zip", "zip dms",
+        "create backup archive", "download zip", "compress backups"
+      ],
+      "path": "?tab=archive"
+    }
+  ]
+}

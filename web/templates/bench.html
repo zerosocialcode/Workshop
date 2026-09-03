@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Workshop — bench overview</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bench.css') }}">
+</head>
+<body>
+
+{% macro state_badge(a) %}
+  {% if a.state == 'failed' %}<span class="badge fail">build failed</span>
+  {% elif a.state == 'needs_build' %}<span class="badge pending">needs build</span>
+  {% elif a.state == 'unsupported' %}<span class="badge unsupported">unsupported</span>
+  {% elif a.state == 'disabled' %}<span class="badge disabled">disabled</span>
+  {% else %}<span class="badge {{ a.type }}">{{ a.type }}</span>
+  {% endif %}
+{% endmacro %}
+
+{% macro app_card(a, i) %}
+  <div class="card app-item" style="--i: {{ i }}"
+       data-folder="{{ a.folder }}"
+       data-search="{{ (a.name ~ ' ' ~ a.folder ~ ' ' ~ a.description ~ ' ' ~ a.category ~ ' ' ~ (a.keywords | join(' '))) | lower }}"
+       data-category="{{ a.category }}">
+    <div class="card-top">
+      <div>
+        <div class="card-title" title="{{ a.name }}">{{ a.name }}</div>
+        <div class="card-path">apps/{{ a.folder }}/ <span class="card-version">v{{ a.version }}</span></div>
+      </div>
+      <div class="card-top-right">
+        <button type="button" class="pin-btn {{ 'pinned' if a.folder in favorite_folders else '' }}"
+                data-folder="{{ a.folder }}" title="Pin to favorites" aria-label="Pin {{ a.name }}">★</button>
+        {{ state_badge(a) }}
+      </div>
+    </div>
+    <p class="card-desc">{{ a.description if a.description else 'No description provided.' }}</p>
+    <div class="card-tags">
+      <span class="card-category">{{ a.category }}</span>
+      {% if a.id_conflict %}<span class="card-flag">id conflict — using folder name</span>{% endif %}
+      {% if a.meta_error %}<span class="card-flag">{{ a.meta_error }}</span>{% endif %}
+    </div>
+
+    {% if a.state == 'failed' %}
+      <p class="card-note">{{ a.build_error or 'Build failed.' }} <a href="/buildlog/{{ a.folder }}">View log</a></p>
+    {% elif a.state == 'needs_build' %}
+      <p class="card-note warn">Not built yet — run <code>python3 scripts/build_tools.py</code>, then Rescan.</p>
+    {% elif a.state == 'unsupported' %}
+      <p class="card-note warn">No entry point Workshop recognizes (no app.py, package.json build script, index.html, or composer.json).</p>
+    {% elif a.state == 'disabled' %}
+      <p class="card-note warn">Disabled via meta.json — remove "disabled": true to bring it back.</p>
+    {% elif a.build_warning %}
+      <p class="card-note warn">{{ a.build_warning }} <a href="/buildlog/{{ a.folder }}">View log</a></p>
+    {% endif %}
+
+    <div class="card-actions">
+      {% if a.state != 'ready' %}
+        <span class="open-btn disabled">Open →</span>
+      {% elif a.open_mode == 'tab' %}
+        <a href="/apps/{{ a.folder }}/" class="open-btn" target="_blank"
+           onclick='recordRecent({{ a.folder | tojson }});'
+           title="This app is set to always open in a new tab">Open ↗</a>
+      {% else %}
+        <a href="/apps/{{ a.folder }}/" class="open-btn"
+           onclick='return openAppViewer(event, {{ a.folder | tojson }}, {{ a.name | tojson }});'>Open →</a>
+      {% endif %}
+      {% if a.type == 'node' %}
+        <a href="#" class="rebuild-btn" onclick='openRebuildModal({{ a.folder | tojson }}, {{ a.name | tojson }}); return false;' title="Rebuild this app now">⟲</a>
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+<div id="eyeOverlay">
+  <div>
+    <div class="eye-eyebrow">⚠ lights notice</div>
+    <div class="eye-message" id="eyeMessage"></div>
+  </div>
+</div>
+
+<div class="landing-gate" id="landingGate">
+  <div class="landing-card">
+    <div class="landing-eyebrow"><span class="pulse-dot"></span>Workshop</div>
+    <h1 class="landing-title">How do you want to work?</h1>
+    <div class="landing-options">
+      <button type="button" class="landing-option" id="landingExploreBtn">
+        <span class="landing-option-title">Explore</span>
+        <span class="landing-option-desc">Browse available apps &amp; tools</span>
+        <span class="landing-option-cta">Browse tools →</span>
+      </button>
+      <button type="button" class="landing-option" id="landingQuickfindBtn">
+        <span class="landing-option-title">Quick Find</span>
+        <span class="landing-option-desc">Tell Workshop what you need</span>
+        <span class="landing-option-cta">Describe a task →</span>
+      </button>
+    </div>
+    <button type="button" class="landing-skip" id="landingSkipBtn">Skip — take me to the bench</button>
+  </div>
+</div>
+
+<div class="crop tl"></div>
+<div class="crop tr"></div>
+<div class="crop bl"></div>
+<div class="crop br"></div>
+
+<div class="sheet">
+  <div class="titleblock in-up">
+    <div class="brand">
+      <div class="brand-eyebrow"><span class="pulse-dot"></span>Sheet 01 — bench overview</div>
+      <h1 class="brand">Workshop</h1>
+      <div class="brand-sub"><b id="toolCount" data-count="{{ count }}">0</b> tool{{ 's' if count != 1 else '' }} ready on the bench<span class="cursor-blink">_</span></div>
+    </div>
+    <div class="headright">
+      <div class="mode-switch" id="modeSwitch" role="tablist" aria-label="Workshop mode">
+        <button type="button" class="mode-switch-btn active" id="modeExploreBtn" role="tab" aria-selected="true">Explore</button>
+        <button type="button" class="mode-switch-btn" id="modeQuickfindBtn" role="tab" aria-selected="false">Quick Find</button>
+      </div>
+      <div class="stat-plate">served from <b>127.0.0.1:5000</b></div>
+      <a href="/refresh" class="rescan-btn" id="rescanBtn">
+        <span class="spin">⟲</span> Rescan bench
+      </a>
+      <div class="switchplate">
+        <span class="switchplate-label">Lights</span>
+        <button type="button" id="themeToggle" aria-label="Toggle day/night mode" aria-pressed="false">
+          <span class="rocker"></span>
+        </button>
+        <span class="switchplate-state" id="themeState">Day</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="exploreView">
+  {% if notices or (apps | selectattr('state', 'in', ['unsupported', 'failed', 'disabled']) | list) %}
+  <div class="notices-bar in-up" style="animation-delay:.08s">
+    {% for n in notices %}
+      <span class="notice-chip">duplicate id "{{ n.id }}" — {{ n.renamed }} kept its folder name</span>
+    {% endfor %}
+    {% set broken = apps | selectattr('state', 'equalto', 'failed') | list %}
+    {% set unsupported = apps | selectattr('state', 'equalto', 'unsupported') | list %}
+    {% set disabled = apps | selectattr('state', 'equalto', 'disabled') | list %}
+    {% if broken %}<span class="notice-chip fail">{{ broken | length }} build failed</span>{% endif %}
+    {% if unsupported %}<span class="notice-chip">{{ unsupported | length }} unsupported</span>{% endif %}
+    {% if disabled %}<span class="notice-chip">{{ disabled | length }} disabled</span>{% endif %}
+  </div>
+  {% endif %}
+
+  <div class="search-rail in-up" style="animation-delay:.12s">
+    <div class="field">
+      <span class="field-label">Filter</span>
+      <input type="text" id="searchInput" placeholder="Type a tool name…" autocomplete="off">
+    </div>
+    <div class="developer-row developer">built by <a href="https://github.com/zerosocialcode" target="_blank">@zerosocialcode</a></div>
+  </div>
+
+  {% if apps | map(attribute='category') | unique | list | length > 1 %}
+  <div class="chip-row in-up" id="categoryChips" style="animation-delay:.14s">
+    <button type="button" class="chip active" data-category="__all__">All</button>
+    {% for cat in apps | map(attribute='category') | unique | sort %}
+      <button type="button" class="chip" data-category="{{ cat }}">{{ cat }}</button>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if pinned %}
+  <div class="section-block in-up" style="animation-delay:.16s">
+    <div class="section-heading"><span class="section-title">Pinned</span><span class="section-rule"></span></div>
+    <div class="apps-grid" id="pinnedGrid">
+      {% for a in pinned %}{{ app_card(a, loop.index0) }}{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if recent %}
+  <div class="section-block in-up" style="animation-delay:.18s">
+    <div class="section-heading">
+      <span class="section-title">Continue Working</span><span class="section-rule"></span>
+      <button type="button" class="section-action" id="clearRecentBtn">Clear</button>
+    </div>
+    <div class="apps-grid" id="recentGrid">
+      {% for a in recent %}{{ app_card(a, loop.index0) }}{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="section-block in-up" style="animation-delay:.2s">
+    {% if pinned or recent %}
+    <div class="section-heading"><span class="section-title">All Tools</span><span class="section-rule"></span></div>
+    {% endif %}
+    <div class="apps-grid" id="appsGrid">
+      {% if not apps %}
+        <div class="empty-note">
+          The bench is empty — either nothing's built yet, or <code>apps/</code> is empty.
+          From the project root, run <code>python3 scripts/build_tools.py</code> to build
+          everything that ships with this workshop, then hit <strong>Rescan bench</strong> above.
+        </div>
+      {% endif %}
+      {% for a in apps %}{{ app_card(a, loop.index0) }}{% endfor %}
+    </div>
+  </div>
+  </div>
+
+  <div id="quickfindView" class="quickfind-view">
+    <div class="quickfind-inner">
+      <div class="quickfind-eyebrow">Quick Find</div>
+      <h2 class="quickfind-prompt">What do you want to do?</h2>
+      <div class="quickfind-input-row">
+        <span class="quickfind-caret">›</span>
+        <input type="text" id="quickfindInput" class="quickfind-input"
+               placeholder="convert jpg to jpeg, format json, open calculator…" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="quickfind-results" id="quickfindResults"></div>
+      <button type="button" class="quickfind-browse-link" id="quickfindBrowseBtn">Or browse all apps →</button>
+    </div>
+  </div>
+</div>
+
+<div class="viewer-overlay" id="appViewer">
+  <div class="viewer-frame" id="viewerFrame">
+    <div class="viewer-titlebar">
+      <div class="viewer-tabs" id="viewerTabs"></div>
+      <div class="viewer-actions">
+        <a href="#" class="viewer-btn" id="viewerPopoutBtn" target="_blank" title="Open the active tab in a new browser tab instead">↗ <span class="btn-label">New tab</span></a>
+        <button type="button" class="viewer-btn" id="viewerFullscreenBtn" title="Toggle fullscreen">⛶ <span class="btn-label">Fullscreen</span></button>
+        <button type="button" class="viewer-btn close-btn" id="viewerCloseBtn" title="Close all (Esc)">✕ <span class="btn-label">Close</span></button>
+      </div>
+    </div>
+    <div class="viewer-body" id="viewerBody">
+      <div class="viewer-empty" id="viewerEmpty">Nothing open.</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="rebuildModal">
+  <div class="modal-card">
+    <div class="modal-eyebrow">Confirm</div>
+    <h3>Rebuild tool</h3>
+    <p>Rebuild <strong id="modalAppName">…</strong> from source now? This re-runs its install and build step.</p>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-btn confirm" id="modalConfirmBtn">Rebuild</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="rebuildAllModal">
+  <div class="modal-card">
+    <div class="modal-eyebrow" id="rebuildAllEyebrow">Working</div>
+    <h3 id="rebuildAllTitle">Rebuilding all tools…</h3>
+    <p id="rebuildAllBody">Only tools that actually changed will do real work — anything already current is a fast no-op.</p>
+    <div class="modal-actions" id="rebuildAllActions" style="display:none;">
+      <button class="modal-btn confirm" onclick="window.location.reload()">Reload bench</button>
+    </div>
+  </div>
+</div>
+
+
+<div class="shortcuts-overlay" id="shortcutsOverlay">
+  <div class="modal-card shortcuts-card">
+    <div class="modal-eyebrow">Reference</div>
+    <h3>Keyboard shortcuts</h3>
+    <div class="shortcuts-list">
+      <div><span class="kbd">Ctrl K</span> Jump to Quick Find</div>
+      <div><span class="kbd">/</span> Focus the Explore filter field</div>
+      <div><span class="kbd">↑</span> <span class="kbd">↓</span> Move through Quick Find results</div>
+      <div><span class="kbd">↵</span> Open the selected result</div>
+      <div><span class="kbd">Esc</span> Clear query, then back to Explore / close this overlay</div>
+      <div><span class="kbd">?</span> Show this overlay</div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" onclick="document.getElementById('shortcutsOverlay').classList.remove('active')">Close</button>
+    </div>
+  </div>
+</div>
+
+<script id="appsData" type="application/json">{{ apps_json | safe }}</script>
+<script src="{{ url_for('static', filename='js/resolver.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bench.js') }}"></script>
+<script src="{{ url_for('static', filename='js/quickfind.js') }}"></script>
+
+</body>
+</html>

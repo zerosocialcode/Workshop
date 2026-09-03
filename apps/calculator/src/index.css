@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Big Shoulders Display", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-bg: var(--bg);
+  --color-bg-deep: var(--bg-deep);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-fail: var(--fail);
+}
+
+:root {
+  /* day — drafting paper */
+  --bg: #ece5d2;
+  --bg-deep: #e2dac2;
+  --paper: #f8f4e8;
+  --ink: #23261f;
+  --ink-soft: #63604e;
+  --ink-faint: #9b9781;
+  --line: #c7bb98;
+  --line-soft: #d9cfae;
+  --accent: #b8441f;
+  --accent-ink: #fbf1e6;
+  --ok: #3f6b45;
+  --warn: #8a5a00;
+  --fail: #a3311c;
+  color-scheme: light;
+}
+
+html[data-theme="night"] {
+  /* night — blueprint cyanotype */
+  --bg: #0d1d31;
+  --bg-deep: #0a1626;
+  --paper: #123058;
+  --ink: #d9e8f4;
+  --ink-soft: #8fadc7;
+  --ink-faint: #4d6f8f;
+  --line: #24476b;
+  --line-soft: #1a3452;
+  --accent: #ff7a45;
+  --accent-ink: #241005;
+  --ok: #7fe3b4;
+  --warn: #f2c14e;
+  --fail: #ff8a70;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background:
+    repeating-linear-gradient(0deg, var(--line-soft) 0, var(--line-soft) 1px, transparent 1px, transparent 34px),
+    repeating-linear-gradient(90deg, var(--line-soft) 0, var(--line-soft) 1px, transparent 1px, transparent 34px),
+    var(--bg);
+  background-attachment: fixed;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Add grid drift animation */
+@keyframes grid-drift {
+  0% { background-position: 0 0; }
+  100% { background-position: 34px 34px; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body {
+    animation: grid-drift 70s linear infinite;
+  }
+}
+
+/* Crop marks */
+.crop-mark {
+  position: fixed;
+  width: 22px;
+  height: 22px;
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 50;
+}
+.crop-mark::before, .crop-mark::after {
+  content: '';
+  position: absolute;
+  background-color: var(--ink-faint);
+}
+.crop-mark::before { top: 10px; left: 0; right: 0; height: 1px; }
+.crop-mark::after { left: 10px; top: 0; bottom: 0; width: 1px; }
+
+.crop-mark-tl { top: 20px; left: 20px; }
+.crop-mark-tr { top: 20px; right: 20px; }
+.crop-mark-bl { bottom: 20px; left: 20px; }
+.crop-mark-br { bottom: 20px; right: 20px; }
+
+/* Components CSS */
+.workshop-card {
+  background-color: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.workshop-card::before, .workshop-card::after {
+  content: '';
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--ink-faint);
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+.workshop-card::before {
+  top: -1px; left: -1px;
+  border-right: none; border-bottom: none;
+  border-top-left-radius: 4px;
+}
+.workshop-card::after {
+  bottom: -1px; right: -1px;
+  border-left: none; border-top: none;
+  border-bottom-right-radius: 4px;
+}
+
+.workshop-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 26px -14px color-mix(in srgb, var(--ink) 55%, transparent);
+}
+.workshop-card:hover::before, .workshop-card:hover::after {
+  border-color: var(--accent);
+  width: 12px; height: 12px;
+}
+
+/* Animations */
+@keyframes draw-line {
+  0% { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+.animate-draw-line {
+  transform-origin: left;
+  animation: draw-line 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: 0.3s;
+  transform: scaleX(0);
+}
+
+@keyframes fade-rise {
+  0% { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-rise {
+  opacity: 0;
+  animation: fade-rise 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Light switch radial flood overlay */
+.light-flood {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0;
+  background: radial-gradient(circle at var(--flood-x, 50%) var(--flood-y, 50%), var(--bg) 0%, transparent 80%);
+}
+.light-flood.active {
+  animation: flood-anim 0.7s ease-in-out forwards;
+}
+@keyframes flood-anim {
+  0% { opacity: 0; }
+  50% { opacity: 0.85; }
+  100% { opacity: 0; }
+}
